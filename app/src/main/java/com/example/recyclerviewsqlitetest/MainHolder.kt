@@ -1,5 +1,6 @@
 package com.example.recyclerviewsqlitetest
 
+import android.graphics.BitmapFactory
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,14 +12,18 @@ class MainHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
     val mainText = itemView.findViewById<TextView>(R.id.mainText)
     val typeText = itemView.findViewById<TextView>(R.id.typeText)
 
-    fun bind(testData: TestData){
+    fun bind(testData: TestData, itemClick:(TestData) -> Unit){
         mainText.text = testData.testText
         typeText.text = when(testData.testSelector){
-            0 -> "test"
-            1 -> "test2"
-            2 -> "test3"
+            1 -> "test"
+            2 -> "test2"
+            3 -> "test3"
             else -> "else"
         }
-       // imageTest.setImageBitmap(testData.testImage)
+        if(testData.testImage != null) {
+            val bitmap = BitmapFactory.decodeByteArray(testData.testImage, 0, testData.testImage.size)
+            imageTest.setImageBitmap(bitmap)
+        }
+        itemView.setOnClickListener { itemClick(testData) }
     }
 }
