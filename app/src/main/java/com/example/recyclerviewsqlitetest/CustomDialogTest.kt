@@ -15,7 +15,7 @@ class  CustomDialogTest(context: Context) {
     private lateinit var selectedText:TextView
     private lateinit var confirmBtn:TextView
 
-    fun start(content:String, image: ByteArray?, selectType:Int){
+    fun start(content:String, image: Int, selectType:Int){
         dlg.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dlg.setContentView(R.layout.custom_dialog)
         dlg.setCancelable(false)
@@ -30,10 +30,7 @@ class  CustomDialogTest(context: Context) {
         }
 
         titleText.text = content
-        if(image != null) {
-            val bitmap = BitmapFactory.decodeByteArray(image, 0, image.size)
-            titleImage.setImageBitmap(bitmap)
-        }
+        titleImage.setImageResource(image)
         selectedText.text = when(selectType){
             1 -> "test"
             2 -> "test2"

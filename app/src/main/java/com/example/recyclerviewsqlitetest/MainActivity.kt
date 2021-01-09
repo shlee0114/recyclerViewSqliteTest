@@ -6,7 +6,12 @@ import android.database.sqlite.SQLiteDatabase
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.BaseColumns
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.InvalidationTracker
+import androidx.room.Room
+import com.example.recyclerviewsqlitetest.room.AppDatabase
+import com.example.recyclerviewsqlitetest.room.Entity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -17,6 +22,18 @@ class MainActivity : AppCompatActivity() {
     companion object{
         lateinit var dbHelper: DBHelper
         lateinit var database: SQLiteDatabase
+        var roomDbTest : AppDatabase? = null
+    }
+
+    var read = Runnable {
+        val entity = roomDbTest?.entityDAO()?.getAll()!!
+        entity.forEach{
+            val id = String.format("s%03d",it.uid)
+            val resId = resources.getIdentifier(id, "drawable", packageName)
+            it.resId = resId
+        }
+        mAdapter.setItem(entity)
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,9 +42,9 @@ class MainActivity : AppCompatActivity() {
 
         dbHelper = DBHelper(this, "testDb.db", null, 1)
 
-        setData()
+        roomDbTest = AppDatabase.getInstance(this)
 
-        mAdapter.data = testDataList
+        setData()
 
         mAdapter.notifyDataSetChanged()
 
@@ -52,23 +69,22 @@ class MainActivity : AppCompatActivity() {
                 val resId = resources.getIdentifier(id, "drawable", packageName)
                 testDataList.add(TestData(cursor.getString(1), cursor.getBlob(2), cursor.getInt(3), resId))
             }
+
+        Thread(read).start()
+        mAdapter.notifyDataSetChanged()
     }
 
     override fun onDestroy() {
+        AppDatabase.destroyInstance()
+        roomDbTest = null
         dbHelper.close()
         super.onDestroy()
-    }
-
-    fun test(){
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == RESULT_OK){
             setData()
-            mAdapter.notifyDataSetChanged()
-            recyclerViewTest.adapter = mAdapter
         }
     }
 }
