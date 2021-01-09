@@ -12,7 +12,7 @@ import com.example.recyclerviewsqlitetest.FeedReaderContract.FeedEntry
 import com.example.recyclerviewsqlitetest.MainActivity.Companion.database
 import java.io.ByteArrayOutputStream
 
-class InsertPage : AppCompatActivity() {
+class  InsertPage : AppCompatActivity() {
 
     private val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
 
@@ -26,14 +26,6 @@ class InsertPage : AppCompatActivity() {
             startActivityForResult(gallery, 1)
         }
 
-        imageViewSnd.setOnClickListener {
-            startActivityForResult(gallery, 2)
-        }
-
-        imageViewThr.setOnClickListener {
-            startActivityForResult(gallery, 3)
-        }
-
         radioGrp.setOnCheckedChangeListener{ radioGroup, checkedId ->
             select = when(checkedId){
                 R.id.test1 -> 1
@@ -44,16 +36,26 @@ class InsertPage : AppCompatActivity() {
         }
 
         save.setOnClickListener {
-            val bitmap = imageView.drawable.toBitmap()
-            val bos = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos)
-            val byte = bos.toByteArray()
-            val values = ContentValues().apply {
-                put(FeedEntry.col1, mainText.text.toString())
-                put(FeedEntry.col2, byte)
-                put(FeedEntry.col3, select)
+            var byte : ByteArray?
+            var values : ContentValues
+            if(imageView.drawable != null) {
+                val bitmap = imageView.drawable.toBitmap()
+                val bos = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos)
+                byte = bos.toByteArray()
+                values = ContentValues().apply {
+                    put(FeedEntry.col1, mainText.text.toString())
+                    put(FeedEntry.col2, byte!!)
+                    put(FeedEntry.col3, select)
+                }
+            }else{
+                values = ContentValues().apply {
+                    put(FeedEntry.col1, mainText.text.toString())
+                    put(FeedEntry.col2, "")
+                    put(FeedEntry.col3, select)
+                }
             }
-            database?.insert(FeedEntry.tableName, null, values)
+            database?.insert(FeedEntry.tableName, null, values!!)
             setResult(RESULT_OK)
             finish()
         }
@@ -70,8 +72,6 @@ class InsertPage : AppCompatActivity() {
             val image = data?.data
             when(requestCode){
                 1 -> imageView.setImageURI(image)
-                2 -> imageViewSnd.setImageURI(image)
-                3 -> imageViewThr.setImageURI(image)
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.example.recyclerviewsqlitetest
 
 import android.content.Intent
+import android.content.res.Resources
 import android.database.sqlite.SQLiteDatabase
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -47,7 +48,9 @@ class MainActivity : AppCompatActivity() {
 
         if(cursor.count != -1)
             while(cursor.moveToNext()) {
-                testDataList.add(TestData(cursor.getString(1), cursor.getBlob(2), cursor.getInt(3)))
+                val id = String.format("s%03d",cursor.getInt(0))
+                val resId = resources.getIdentifier(id, "drawable", packageName)
+                testDataList.add(TestData(cursor.getString(1), cursor.getBlob(2), cursor.getInt(3), resId))
             }
     }
 

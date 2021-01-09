@@ -8,7 +8,7 @@ import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
 
-class CustomDialogTest(context: Context) {
+class  CustomDialogTest(context: Context) {
     private val dlg = Dialog(context)
     private lateinit var titleImage:ImageView
     private lateinit var titleText:TextView

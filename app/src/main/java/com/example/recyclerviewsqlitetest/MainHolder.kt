@@ -1,5 +1,6 @@
 package com.example.recyclerviewsqlitetest
 
+import android.content.res.Resources
 import android.graphics.BitmapFactory
 import android.view.View
 import android.widget.ImageView
@@ -20,9 +21,11 @@ class MainHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
             3 -> "test3"
             else -> "else"
         }
-        if(testData.testImage != null) {
+        if(testData.testImage != null && testData.testImage.size != 1) {
             val bitmap = BitmapFactory.decodeByteArray(testData.testImage, 0, testData.testImage.size)
             imageTest.setImageBitmap(bitmap)
+        }else{
+            imageTest.setImageResource(testData.imageInt)
         }
         itemView.setOnClickListener { itemClick(testData) }
     }
